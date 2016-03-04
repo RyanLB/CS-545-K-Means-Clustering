@@ -30,6 +30,6 @@ class NumberInstance {
         }
         
         knownValue = Int(asArray[64])!
-        location = try! Point(attributeVector: asArray[0..<64].map{ Float($0)! })
+        location = try! Point(attributeVector: asArray[0..<64].map{ Double($0)! })
     }
 }

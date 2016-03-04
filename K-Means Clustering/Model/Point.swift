@@ -14,14 +14,14 @@ enum PointErrors : ErrorType {
 }
 
 class Point {
-    let attributeVector: [Float]
+    let attributeVector: [Double]
     let dimensions: Int
     
-    subscript(index: Int) -> Float {
+    subscript(index: Int) -> Double {
         get { return attributeVector[index] }
     }
     
-    init(attributeVector: [Float]) throws {
+    init(attributeVector: [Double]) throws {
         self.dimensions = attributeVector.count
         self.attributeVector = attributeVector
         
@@ -30,11 +30,11 @@ class Point {
         }
     }
     
-    func distance(p2: Point) throws -> Float {
+    func distance(p2: Point) throws -> Double {
         return sqrt(try squaredDistance(p2))
     }
     
-    func squaredDistance(p2: Point) throws -> Float {
+    func squaredDistance(p2: Point) throws -> Double {
         guard dimensions == p2.dimensions else {
             throw PointErrors.MismatchedLengthError(expected: dimensions, found: p2.dimensions)
         }

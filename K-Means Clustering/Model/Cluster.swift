@@ -32,24 +32,24 @@ class Cluster {
             return center
         }
         
-        var means = [Float](count: 64, repeatedValue: 0.0)
+        var means = [Double](count: 64, repeatedValue: 0.0)
         for i in 0..<64 {
-            means[i] = members.map{ $0.location[i] }.reduce(0, combine: +) / Float(members.count)
+            means[i] = members.map{ $0.location[i] }.reduce(0, combine: +) / Double(members.count)
         }
         
         return try! Point(attributeVector: means)
     }
     
-    func accuracy() -> Float {
+    func accuracy() -> Double {
         guard members.count > 0 else {
             return 0.0
         }
         
         let g = guess()
-        return Float(members.countWhere{ $0.knownValue == g }) / Float(members.count)
+        return Double(members.countWhere{ $0.knownValue == g }) / Double(members.count)
     }
     
-    func sumSquaredDistance() throws -> Float {
+    func sumSquaredDistance() throws -> Double {
         let c = centroid()
         return try members.reduce(0.0, combine: { try $0 + c.squaredDistance($1.location) })
     }
