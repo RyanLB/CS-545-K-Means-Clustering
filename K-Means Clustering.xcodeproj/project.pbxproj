@@ -13,6 +13,7 @@
 		74B6389F1C88C6A400684CFE /* Cluster.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74B6389E1C88C6A400684CFE /* Cluster.swift */; };
 		74B638A11C88C71C00684CFE /* Point.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74B638A01C88C71C00684CFE /* Point.swift */; };
 		74B638A31C88EC9100684CFE /* NSArrayExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74B638A21C88EC9100684CFE /* NSArrayExtension.swift */; };
+		74B638A51C8915BA00684CFE /* KMClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74B638A41C8915BA00684CFE /* KMClient.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -35,6 +36,7 @@
 		74B6389E1C88C6A400684CFE /* Cluster.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cluster.swift; sourceTree = "<group>"; };
 		74B638A01C88C71C00684CFE /* Point.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Point.swift; sourceTree = "<group>"; };
 		74B638A21C88EC9100684CFE /* NSArrayExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSArrayExtension.swift; sourceTree = "<group>"; };
+		74B638A41C8915BA00684CFE /* KMClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KMClient.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +72,7 @@
 				74B6389B1C88C5A400684CFE /* Model */,
 				7411C2031C87AC3000323400 /* Extensions */,
 				7411C1FB1C87AB9E00323400 /* main.swift */,
+				74B638A41C8915BA00684CFE /* KMClient.swift */,
 			);
 			path = "K-Means Clustering";
 			sourceTree = "<group>";
@@ -154,6 +157,7 @@
 				74B638A11C88C71C00684CFE /* Point.swift in Sources */,
 				74B638A31C88EC9100684CFE /* NSArrayExtension.swift in Sources */,
 				7411C2051C87AC3000323400 /* NSFileHandleExtension.swift in Sources */,
+				74B638A51C8915BA00684CFE /* KMClient.swift in Sources */,
 				74B6389F1C88C6A400684CFE /* Cluster.swift in Sources */,
 				7411C1FC1C87AB9E00323400 /* main.swift in Sources */,
 			);
