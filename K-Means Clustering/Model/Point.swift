@@ -47,10 +47,10 @@ class Point {
             throw PointErrors.NegativeLengthException(length: dimensions)
         }
         
-        var attributes = [Float]()
+        var attributes = [Double]()
         
         for _ in 0..<dimensions {
-            attributes.append(1.0 / Float(arc4random()))
+            attributes.append(1.0 / Double(arc4random()))
         }
         
         return try Point(attributeVector: attributes)

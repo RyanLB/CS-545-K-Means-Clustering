@@ -24,3 +24,6 @@ let client = KMClient()
 try! client.loadData(trainingLocation, testLocation: testLocation)
 
 print("\(client.trainingData.count) \(client.testData.count)")
+
+let hist = try client.train(10, maxRepetitions: 5)
+print(hist.history)

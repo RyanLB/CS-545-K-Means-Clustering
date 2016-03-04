@@ -24,11 +24,11 @@ extension Array {
     /**
      Returns the indices of all elements that satisfy the given predicate.
      */
-    func indicesWhere(predicate: Element -> Bool) -> [Int] {
+    func indicesWhere(predicate: Element throws -> Bool) rethrows -> [Int] {
         var results = [Int]()
         
         for i in 0..<self.count {
-            if predicate(self[i]) {
+            if try predicate(self[i]) {
                 results.append(i)
             }
         }
@@ -45,5 +45,12 @@ extension Array {
             
             return $0
         })
+    }
+    
+    /// Returns the index of an element satisfying the given predicate. Ties are broken randomly.
+    func randomWinnerIndex(winCondition: Element throws -> Bool) rethrows -> Int {
+        let winners = try indicesWhere(winCondition)
+        
+        return winners[Int(arc4random_uniform(UInt32(winners.count)))]
     }
 }
