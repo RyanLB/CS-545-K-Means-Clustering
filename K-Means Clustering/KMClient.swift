@@ -37,12 +37,29 @@ class KMClient {
         
         for _ in 0..<maxRepetitions {
             try bucketInstances(trainingData)
-            clusters.forEach{ $0.center = $0.centroid() }
+            let centersUpdated = updateClusterCenters()
             
             hist.append(clusters.reduce(0.0, combine: { $0 + ($1.accuracy() * (Double($1.members.count) / Double(trainingData.count))) }))
+            
+            if !centersUpdated {
+                break
+            }
         }
         
         return hist
+    }
+    
+    private func updateClusterCenters() -> Bool {
+        var updated = false
+        clusters.forEach{
+            let newCenter = $0.centroid()
+            if newCenter != $0.center {
+                updated = true
+            }
+            $0.center = newCenter
+        }
+        
+        return updated
     }
     
     func sumSquaredError() throws -> Double {

@@ -7,13 +7,22 @@
 //
 
 import Foundation
+import Accelerate
 
 enum PointErrors : ErrorType {
     case MismatchedLengthError(expected: Int, found: Int)
     case NegativeLengthException(length: Int)
 }
 
-class Point {
+func == (left: Point, right: Point) -> Bool {
+    return left.attributeVector == right.attributeVector
+}
+
+func != (left: Point, right: Point) -> Bool {
+    return left.attributeVector != right.attributeVector
+}
+
+struct Point {
     let attributeVector: [Double]
     let dimensions: Int
     
@@ -42,7 +51,7 @@ class Point {
         return zip(attributeVector, p2.attributeVector).reduce(0.0, combine: { $0 + pow($1.1 - $1.0, 2) })
     }
     
-    class func RandomPoint(dimensions: Int) throws -> Point {
+    static func RandomPoint(dimensions: Int) throws -> Point {
         guard dimensions > 0 else {
             throw PointErrors.NegativeLengthException(length: dimensions)
         }
