@@ -50,7 +50,6 @@ class Cluster {
     }
     
     func sumSquaredDistance() throws -> Double {
-        let c = centroid()
-        return try members.reduce(0.0, combine: { try $0 + c.squaredDistance($1.location) })
+        return try members.reduce(0.0, combine: { try $0 + center.squaredDistance($1.location) })
     }
 }

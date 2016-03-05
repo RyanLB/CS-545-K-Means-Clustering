@@ -12,24 +12,28 @@ enum KMClientError : ErrorType {
     case InvalidFilepath(path: String)
 }
 
-class KMClient {
-    struct AccuracyHistory {
-        var history = [Double]()
-        
-        mutating func append(item: Double) {
-            history.append(item)
-        }
-    }
+struct KMResult {
+    let accuracy: Double
+    let sumSquaredError: Double
+    let sumSquaredSeparation: Double
+    let clusters: [Cluster]
     
+    init(accuracy: Double, sumSquaredError: Double, sumSquaredSeparation: Double, clusters: [Cluster]) {
+        self.accuracy = accuracy
+        self.sumSquaredError = sumSquaredError
+        self.sumSquaredSeparation = sumSquaredSeparation
+        self.clusters = clusters
+    }
+}
+
+class KMClient {
     var trainingData = [NumberInstance]()
     var testData = [NumberInstance]()
     
-    private var clusters = [Cluster]()
+    var clusters = [Cluster]()
     
-    func train(clusterCount: Int, maxRepetitions: Int) throws -> AccuracyHistory {
+    func train(clusterCount: Int, maxRepetitions: Int) throws -> KMResult {
         clusters = [Cluster]()
-        
-        var hist = AccuracyHistory()
         
         for _ in 0..<clusterCount {
             clusters.append(Cluster())
@@ -39,14 +43,24 @@ class KMClient {
             try bucketInstances(trainingData)
             let centersUpdated = updateClusterCenters()
             
-            hist.append(clusters.reduce(0.0, combine: { $0 + ($1.accuracy() * (Double($1.members.count) / Double(trainingData.count))) }))
-            
             if !centersUpdated {
                 break
             }
         }
         
-        return hist
+        return KMResult(accuracy: accuracy(),
+                        sumSquaredError: try sumSquaredError(),
+                        sumSquaredSeparation: try sumSquaredSeparation(),
+                        clusters: clusters)
+    }
+    
+    func testAccuracy() throws -> Double {
+        try bucketInstances(testData)
+        return accuracy()
+    }
+    
+    private func accuracy() -> Double {
+        return clusters.reduce(0.0, combine: { $0 + ($1.accuracy() * (Double($1.members.count) / Double(trainingData.count))) })
     }
     
     private func updateClusterCenters() -> Bool {

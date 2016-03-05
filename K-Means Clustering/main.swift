@@ -23,5 +23,14 @@ let client = KMClient()
 
 try! client.loadData(trainingLocation, testLocation: testLocation)
 
-let hist = try client.train(30, maxRepetitions: 50)
-print(hist.history)
+var iterations = [KMResult]()
+for _ in 0..<5 {
+    iterations.append(try client.train(10, maxRepetitions: 50))
+}
+
+let winner = iterations.randomWinnerIndex{ $0.sumSquaredError == iterations.map{ $0.sumSquaredError }.minElement() }
+
+// My abstraction is leaking
+client.clusters = iterations[winner].clusters
+
+print("Accuracy: \(try client.testAccuracy())")
