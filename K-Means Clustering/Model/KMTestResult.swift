@@ -13,19 +13,17 @@ struct KMTestResult {
     private let buckets: [[NumberInstance]]
     private let guesses: [Int]
     
-    // Lazy calculation of numeric result properties
+    // Lazy calculation of numeric result properties.
+    // Swift has language support for lazy properties, but it appears to be bugged for structs at the moment.
     private var _accuracy: Double?
     private var _sumSquaredError: Double?
     private var _sumSquaredDistance: Double?
+    private var _meanEntropy: Double?
     
     init(clusters: ClusterSet, buckets: [[NumberInstance]], guesses: [Int]) {
         self.clusters = clusters
         self.buckets = buckets
         self.guesses = guesses
-        
-        _accuracy = nil
-        _sumSquaredError = nil
-        _sumSquaredDistance = nil
         
         assert(clusters.clusters.count == buckets.count && buckets.count == guesses.count)
     }
@@ -65,6 +63,32 @@ struct KMTestResult {
             
             return _sumSquaredDistance!
         }
+    }
+    
+    var meanEntropy: Double {
+        mutating get {
+            if _meanEntropy == nil {
+                let totalInstances = Double(buckets.map{ $0.count }.reduce(0, combine: +))
+                _meanEntropy = (buckets.map(entropyOfBucket).reduce(0, combine: +)) / totalInstances
+            }
+            
+            return _meanEntropy!
+        }
+    }
+    
+    private func entropyOfBucket(bucket: [NumberInstance]) -> Double {
+        var entropy = 0.0
+        let totalInstances = Double(bucket.count)
+        for i in 0..<10 {
+            let count = Double(bucket.countWhere{ $0.knownValue == i })
+            
+            if count > 0 {
+                let p = count / totalInstances
+                entropy += p * log2(p)
+            }
+        }
+        
+        return -entropy
     }
     
 }
