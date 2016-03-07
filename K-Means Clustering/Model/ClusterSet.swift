@@ -63,7 +63,7 @@ class ClusterSet {
     func sumSquaredSeparation() -> Double {
         var separation = 0.0
         for i in 0..<(_clusters.count - 1) {
-            for j in i..<_clusters.count {
+            for j in (i + 1)..<_clusters.count {
                 try! separation += _clusters[i].center.squaredDistance(_clusters[j].center)
             }
         }
