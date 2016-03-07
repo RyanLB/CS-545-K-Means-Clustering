@@ -16,21 +16,9 @@ guard Process.argc >= 3 else {
 let trainingLocation = Process.arguments[1]
 let testLocation = Process.arguments[2]
 
-print(trainingLocation)
-print(testLocation)
+let trainingData = try loadDataFromFile(trainingLocation)
+let testData = try loadDataFromFile(testLocation)
 
-let client = KMClient()
-
-try! client.loadData(trainingLocation, testLocation: testLocation)
-
-var iterations = [KMResult]()
-for _ in 0..<5 {
-    iterations.append(try client.train(10, maxRepetitions: 50))
-}
-
-let winner = iterations.randomWinnerIndex{ $0.sumSquaredError == iterations.map{ $0.sumSquaredError }.minElement() }
-
-// My abstraction is leaking
-client.clusters = iterations[winner].clusters
-
-print("Accuracy: \(try client.testAccuracy())")
+let exp1Set = try ClusterSet.bestOf(5, fromData: trainingData, withCardinality: 10, andTrainingLimit: 10)
+let exp1Results = exp1Set.testOnData(testData)
+print(exp1Results.accuracy)

@@ -9,47 +9,57 @@
 import Foundation
 
 class Cluster {
-    var center: Point
-    var members: [NumberInstance]
+    var _center: Point
+    var center: Point {
+        return _center
+    }
     
     init() {
-        center = try! Point.RandomPoint(64)
-        members = []
+        _center = try! Point.RandomPoint(64)
     }
     
-    func guess() -> Int {
+    func guessFromData(data: [NumberInstance]) -> Int {
         var counts = [Int]()
         for i in 0...9 {
-            counts.append(members.countWhere{ $0.knownValue == i })
+            counts.append(data.countWhere{ $0.knownValue == i })
         }
         
-        let winners = counts.indicesWhere{ $0 == counts.maxElement()! }
-        return winners[Int(arc4random_uniform(UInt32(winners.count)))]
+        return counts.randomWinnerIndex{ $0 == counts.maxElement() }
     }
     
-    func centroid() -> Point {
-        if members.count == 0 {
+    func recenterWithInstances(instances: [NumberInstance]) -> Bool {
+        let c = centroid(instances)
+        let updated = c == center
+        _center = c
+        return updated
+    }
+    
+    private func centroid(instances: [NumberInstance]) -> Point {
+        if instances.count == 0 {
             return center
         }
         
         var means = [Double](count: 64, repeatedValue: 0.0)
         for i in 0..<64 {
-            means[i] = members.map{ $0.location[i] }.reduce(0, combine: +) / Double(members.count)
+            means[i] = instances.map{ $0.location[i] }.reduce(0, combine: +) / Double(instances.count)
         }
         
         return try! Point(attributeVector: means)
     }
     
-    func accuracy() -> Double {
-        guard members.count > 0 else {
+    func accuracyFromData(data: [NumberInstance]) -> Double {
+        return accuracyFromData(data, forGuess: guessFromData(data))
+    }
+    
+    func accuracyFromData(data: [NumberInstance], forGuess: Int) -> Double {
+        guard data.count > 0 else {
             return 0.0
         }
         
-        let g = guess()
-        return Double(members.countWhere{ $0.knownValue == g }) / Double(members.count)
+        return Double(data.countWhere{ $0.knownValue == forGuess }) / Double(data.count)
     }
     
-    func sumSquaredDistance() throws -> Double {
-        return try members.reduce(0.0, combine: { try $0 + center.squaredDistance($1.location) })
+    func sumSquaredDistanceForInstances(instances: [NumberInstance]) throws -> Double {
+        return try instances.reduce(0.0, combine: { try $0 + center.squaredDistance($1.location) })
     }
 }
