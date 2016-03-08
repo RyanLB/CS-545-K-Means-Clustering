@@ -18,6 +18,11 @@ class Cluster {
         _center = try! Point.RandomPoint(64)
     }
     
+    init(fromPoint: Point) {
+        assert(fromPoint.attributeVector.count == 64)
+        _center = fromPoint
+    }
+    
     func guessFromData(data: [NumberInstance]) -> Int {
         var counts = [Int]()
         for i in 0...9 {
@@ -61,5 +66,15 @@ class Cluster {
     
     func sumSquaredDistanceForInstances(instances: [NumberInstance]) throws -> Double {
         return try instances.reduce(0.0, combine: { try $0 + center.squaredDistance($1.location) })
+    }
+    
+    func visualized() -> NSData {
+        var bytes = "P2\n8 8\n255\n"
+        let pixelValues = center.attributeVector.map{ String(UInt8(($0 / 16) * 255)) }
+        for i in 0..<8 {
+            let base = i * 8
+            bytes += pixelValues[base..<(base + 8)].reduce("", combine: +) + "\n"
+        }
+        return (bytes as NSString).dataUsingEncoding(NSASCIIStringEncoding)!
     }
 }

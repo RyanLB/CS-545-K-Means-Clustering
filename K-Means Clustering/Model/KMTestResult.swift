@@ -69,7 +69,7 @@ struct KMTestResult {
         mutating get {
             if _meanEntropy == nil {
                 let totalInstances = Double(buckets.map{ $0.count }.reduce(0, combine: +))
-                _meanEntropy = (buckets.map(entropyOfBucket).reduce(0, combine: +)) / totalInstances
+                _meanEntropy = (buckets.map{ Double($0.count) * entropyOfBucket($0) }.reduce(0, combine: +)) / totalInstances
             }
             
             return _meanEntropy!

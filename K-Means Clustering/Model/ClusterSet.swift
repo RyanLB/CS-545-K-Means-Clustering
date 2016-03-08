@@ -92,6 +92,40 @@ class ClusterSet {
         return KMTestResult(clusters: self, buckets: buckets, guesses: guesses)
     }
     
+    func visualizedWithRowsOf(length: Int) -> NSData {
+        let padding = Cluster(fromPoint: try! Point(attributeVector: [Double](count: 64, repeatedValue: 0.0)))
+        
+        var paddedClusters = _clusters
+        
+        var rowCount = _clusters.count / length
+        if _clusters.count % length != 0 {
+            paddedClusters += [Cluster](count: _clusters.count - (_clusters.count % length), repeatedValue: padding)
+            ++rowCount
+        }
+        
+        var dataString = "P2\n\(length * 8) \(rowCount * 8)\n255\n"
+        
+        for i in 0..<rowCount {
+            let base = i * length
+            let row = Array(_clusters[base..<(base + length)])
+            dataString += visualizedRow(row)
+        }
+        
+        return (dataString as NSString).dataUsingEncoding(NSASCIIStringEncoding)!
+    }
+    
+    private func visualizedRow(row: [Cluster]) -> String {
+        var dataString = ""
+        for line in 0..<8 {
+            let base = line * 8
+            let lineValues = row.map{ $0.center.attributeVector[base..<(base + 8)] }.flatten()
+            let lineString = lineValues.map{ String(UInt8(($0 / 16) * 255)) }.joinWithSeparator(" ")
+            dataString += lineString + "\n"
+        }
+        
+        return dataString
+    }
+    
     private func bucketInstances(instances: [NumberInstance]) -> [[NumberInstance]] {
         var buckets = [[NumberInstance]](count: _clusters.count, repeatedValue: [NumberInstance]())
         for i in instances {

@@ -8,13 +8,25 @@
 
 import Foundation
 
-guard Process.argc >= 3 else {
-    print("usage: K-Means\\ Clustering trainingLocation testLocation")
-    exit(1)
-}
+var trainingLocation: String
+var testLocation: String
+var imageLocation: String
 
-let trainingLocation = Process.arguments[1]
-let testLocation = Process.arguments[2]
+if Process.argc >= 4 {
+    trainingLocation = Process.arguments[1]
+    testLocation = Process.arguments[2]
+    imageLocation = Process.arguments[3]
+}
+else {
+    let userInputHandle = NSFileHandle.fileHandleWithStandardInput()
+    print("Enter training data location: ")
+    trainingLocation = String(data: userInputHandle.availableData, encoding: NSASCIIStringEncoding)!
+    print("Enter test data location: ")
+    testLocation = String(data: userInputHandle.availableData, encoding: NSASCIIStringEncoding)!
+    print("Enter output location (for cluster visualizations): ")
+    imageLocation = String(data: userInputHandle.availableData, encoding: NSASCIIStringEncoding)!
+    userInputHandle.closeFile()
+}
 
 let trainingData = try loadDataFromFile(trainingLocation)
 let testData = try loadDataFromFile(testLocation)
@@ -25,3 +37,4 @@ print("Accuracy: \(exp1Results.accuracy)")
 print("SSE: \(exp1Results.sumSquaredError)")
 print("SSS: \(exp1Results.sumSquaredDistance)")
 print("Mean entropy: \(exp1Results.meanEntropy)")
+exp1Set.visualizedWithRowsOf(5).writeToFile(imageLocation, atomically: false)
