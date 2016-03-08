@@ -31,10 +31,14 @@ else {
 let trainingData = try loadDataFromFile(trainingLocation)
 let testData = try loadDataFromFile(testLocation)
 
-let exp1Set = try ClusterSet.bestOf(5, fromData: trainingData, withCardinality: 10, andTrainingLimit: 10)
+let exp1Set = try ClusterSet.bestOf(5, fromData: trainingData, withCardinality: 30, andTrainingLimit: 50)
 var exp1Results = exp1Set.testOnData(testData)
 print("Accuracy: \(exp1Results.accuracy)")
 print("SSE: \(exp1Results.sumSquaredError)")
 print("SSS: \(exp1Results.sumSquaredDistance)")
 print("Mean entropy: \(exp1Results.meanEntropy)")
 exp1Set.visualizedWithRowsOf(5).writeToFile(imageLocation, atomically: false)
+
+for c in exp1Set.clusters {
+    print(c.center.attributeVector)
+}

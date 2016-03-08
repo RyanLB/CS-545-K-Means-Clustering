@@ -41,7 +41,8 @@ class Cluster {
     
     private func centroid(instances: [NumberInstance]) -> Point {
         if instances.count == 0 {
-            return center
+            return try! Point.RandomPoint(64)
+            //return center
         }
         
         var means = [Double](count: 64, repeatedValue: 0.0)
