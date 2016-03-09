@@ -31,7 +31,9 @@ else {
 let trainingData = try loadDataFromFile(trainingLocation)
 let testData = try loadDataFromFile(testLocation)
 
-let exp1Set = try ClusterSet.bestOf(5, fromData: trainingData, withCardinality: 10, andTrainingLimit: 1000)
+//let exp1Set = try ClusterSet.bestOf(5, fromData: trainingData, withCardinality: 10, andTrainingLimit: 1000)
+let exp1Set = ClusterSet(k: 10, distributedThroughoutPoints: trainingData.map{ $0.location })
+try exp1Set.trainOnData(trainingData, maxIterations: 1000)
 var exp1Results = exp1Set.testOnData(testData)
 print("Accuracy: \(exp1Results.accuracy)")
 print("SSE: \(exp1Results.sumSquaredError)")
@@ -39,8 +41,11 @@ print("SSS: \(exp1Results.sumSquaredDistance)")
 print("Mean entropy: \(exp1Results.meanEntropy)")
 exp1Set.visualizedWithRowsOf(5).writeToFile(outputDirectory + "/10.pgm", atomically: false)
 
+
 print("\nExperiment 2")
-let exp2Set = try ClusterSet.bestOf(5, fromData: trainingData, withCardinality: 30, andTrainingLimit: 1000)
+//let exp2Set = try ClusterSet.bestOf(5, fromData: trainingData, withCardinality: 30, andTrainingLimit: 1000)
+let exp2Set = ClusterSet(k: 30, distributedThroughoutPoints: trainingData.map{ $0.location })
+try exp2Set.trainOnData(trainingData, maxIterations: 1000)
 var exp2Results = exp2Set.testOnData(testData)
 print("Accuracy: \(exp2Results.accuracy)")
 print("SSE: \(exp2Results.sumSquaredError)")
