@@ -109,12 +109,19 @@ class ClusterSet {
         return sets[windex]
     }
     
-    /// Bundles up a ClusterSet, buckets of Instances, and bucket predictions over the given dataset.
-    func testOnData(data: [NumberInstance]) -> KMTestResult {
+    /// Returns a set of labels based on bucketing of the training data
+    func clusterLabelsFromData(data: [NumberInstance]) -> [Int] {
         let buckets = bucketInstances(data)
-        let guesses = zip(_clusters, buckets).map{ $0.0.guessFromData($0.1) }
+        return zip(_clusters, buckets).map{ $0.0.guessFromData($0.1) }
+    }
+    
+    /// Bundles up a ClusterSet, buckets of Instances, and bucket predictions over the given dataset.
+    func testOnData(data: [NumberInstance], withClusterLabels: [Int]) -> KMTestResult {
+        assert(withClusterLabels.count == _clusters.count)
         
-        return KMTestResult(clusters: self, buckets: buckets, guesses: guesses)
+        let buckets = bucketInstances(data)
+        
+        return KMTestResult(clusters: self, buckets: buckets, guesses: withClusterLabels)
     }
     
     /**
