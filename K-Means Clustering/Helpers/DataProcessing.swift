@@ -12,6 +12,8 @@ enum DataProcessingError : ErrorType {
     case InvalidFilepath(path: String)
 }
 
+
+/// Read an OptDigit data file into an array of NumberInstances
 func loadDataFromFile(file: String) throws -> [NumberInstance] {
     var instances = [NumberInstance]()
     

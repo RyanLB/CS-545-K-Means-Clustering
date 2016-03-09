@@ -23,6 +23,7 @@ class Cluster {
         _center = fromPoint
     }
     
+    /// Returns the most common actual class in the given bucket. Ties are broken at random.
     func guessFromData(data: [NumberInstance]) -> Int {
         var counts = [Int]()
         for i in 0...9 {
@@ -32,6 +33,11 @@ class Cluster {
         return counts.randomWinnerIndex{ $0 == counts.maxElement() }
     }
     
+    /**
+     Moves the center of this Cluster to the centroid, assuming they are different.
+     
+     Returns: A Bool indicating whether or not the centroid moved.
+     */
     func recenterWithInstances(instances: [NumberInstance]) -> Bool {
         let c = centroid(instances)
         let updated = c == center
@@ -39,10 +45,10 @@ class Cluster {
         return updated
     }
     
+    /// Finds the mean of the given set of instances. If this bucket is empty, we pick a new center at random.
     private func centroid(instances: [NumberInstance]) -> Point {
         if instances.count == 0 {
             return try! Point.RandomPoint(64, withLimit: 16)
-            //return center
         }
         
         var means = [Double](count: 64, repeatedValue: 0.0)
@@ -53,30 +59,8 @@ class Cluster {
         return try! Point(attributeVector: means)
     }
     
-    func accuracyFromData(data: [NumberInstance]) -> Double {
-        return accuracyFromData(data, forGuess: guessFromData(data))
-    }
-    
-    func accuracyFromData(data: [NumberInstance], forGuess: Int) -> Double {
-        guard data.count > 0 else {
-            return 0.0
-        }
-        
-        return Double(data.countWhere{ $0.knownValue == forGuess }) / Double(data.count)
-    }
-    
+    /// Finds the total distance between this Cluster's center and all of the instances in the given set.
     func sumSquaredDistanceForInstances(instances: [NumberInstance]) throws -> Double {
         return try instances.map{ try center.squaredDistance($0.location) }.reduce(0, combine: +)
-        //return try instances.reduce(0.0, combine: { try $0 + center.squaredDistance($1.location) })
-    }
-    
-    func visualized() -> NSData {
-        var bytes = "P2\n8 8\n255\n"
-        let pixelValues = center.attributeVector.map{ String(UInt8(($0 / 16) * 255)) }
-        for i in 0..<8 {
-            let base = i * 8
-            bytes += pixelValues[base..<(base + 8)].reduce("", combine: +) + "\n"
-        }
-        return (bytes as NSString).dataUsingEncoding(NSASCIIStringEncoding)!
     }
 }

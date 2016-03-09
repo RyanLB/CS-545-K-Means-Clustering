@@ -39,10 +39,12 @@ struct Point {
         }
     }
     
+    /// Calculates the Euclidean distance between this Point and the argument
     func distance(p2: Point) throws -> Double {
         return sqrt(try squaredDistance(p2))
     }
     
+    /// Calculates squared distance between this Point and the argument.
     func squaredDistance(p2: Point) throws -> Double {
         guard dimensions == p2.dimensions else {
             throw PointErrors.MismatchedLengthError(expected: dimensions, found: p2.dimensions)
@@ -51,6 +53,13 @@ struct Point {
         return zip(attributeVector, p2.attributeVector).map{ pow($0.1 - $0.0, 2) }.reduce(0, combine: +)
     }
     
+    /**
+     Creates a random vector with the given dimensionality.
+     
+     Parameter dimensions: The length of the generated vector.
+     
+     Parameter withLimit: The upper bound for this Vector's entries. 
+     */
     static func RandomPoint(dimensions: Int, withLimit: Double) throws -> Point {
         guard dimensions > 0 else {
             throw PointErrors.NegativeLengthException(length: dimensions)

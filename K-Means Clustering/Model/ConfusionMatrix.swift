@@ -25,6 +25,10 @@ struct ConfusionMatrix {
         return buckets
     }()
     
+    /**
+     Generates a representation of this matrix as a string of comma/newline delimited values.
+     */
+    
     mutating func toCSVString() -> String {
         var str = ""
         for i in 0..<10 {

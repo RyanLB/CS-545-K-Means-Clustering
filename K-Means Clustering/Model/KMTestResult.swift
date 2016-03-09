@@ -2,6 +2,10 @@
 //  KMTestResult.swift
 //  K-Means Clustering
 //
+//  Since this assignment breaks ties at random in several places, this struct is used to bundle
+//  a clustering result with predictions and remove nondeterminism so that calculations can be done on a
+//  static set of classifications.
+//
 //  Created by Ryan Bernstein on 3/6/16.
 //  Copyright © 2016 Ryan Bernstein. All rights reserved.
 //
@@ -31,9 +35,7 @@ struct KMTestResult {
     var accuracy: Double {
         mutating get {
             if _accuracy == nil {
-            
-                let bucketsAndGuesses = zip(buckets, guesses).map{ ($0.0, forGuess: $0.1) }
-                let clusterAccuracies = zip(clusters.clusters, bucketsAndGuesses).map{ $0.0.accuracyFromData($0.1) }
+                let clusterAccuracies = zip(buckets, guesses).map{ accuracyForBucket($0.0, withGuess: $0.1) }
                 
                 let total = buckets.map{ $0.count }.reduce(0, combine: +)
                 let weights = buckets.map{ Double($0.count) / Double(total) }
@@ -76,6 +78,22 @@ struct KMTestResult {
         }
     }
     
+    /// Generates and returns a confusion matrix for this bucketing
+    func generateConfusionMatrix() -> ConfusionMatrix {
+        let classifiedInstances = Array(zip(buckets, guesses).map{ instancesFromBucket($0.0, withGuess: $0.1) }.flatten())
+        return ConfusionMatrix(data: classifiedInstances)
+    }
+    
+    /// Returns the percentage of bucketed instances whose actual class matches the given guess.
+    private func accuracyForBucket(bucket: [NumberInstance], withGuess: Int) -> Double {
+        guard bucket.count > 0 else {
+            return 0.0
+        }
+        
+        return Double(bucket.countWhere{ $0.knownValue == withGuess }) / Double(bucket.count)
+    }
+    
+    /// Calculates the entropy of a single cluster.
     private func entropyOfBucket(bucket: [NumberInstance]) -> Double {
         var entropy = 0.0
         let totalInstances = Double(bucket.count)
@@ -89,6 +107,11 @@ struct KMTestResult {
         }
         
         return -entropy
+    }
+    
+    /// Helper function that bundles up instances and guesses for a given bucket.
+    private func instancesFromBucket(bucket: [NumberInstance], withGuess: Int) -> [(instance: NumberInstance, guess: Int)] {
+        return bucket.map{ (instance: $0, guess: withGuess) }
     }
     
 }
