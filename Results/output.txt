@@ -1,0 +1,11 @@
+Training SSE: 3009190.45402198
+Training SSS: 69129.5696918842
+Mean entropy: 1.6303680831942
+Accuracy: 0.611574846967168
+
+Experiment 2
+Training SSE: 1986644.45738303
+Training SSS: 695745.048674869
+Mean entropy: 0.531886343856253
+Accuracy: 0.887033945464664
+Program ended with exit code: 0

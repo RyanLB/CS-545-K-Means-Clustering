@@ -1,1 +1,4 @@
 K-Means Clustering.xcodeproj/xcuserdata
+*.aux
+*.log
+*.synctex.gz
