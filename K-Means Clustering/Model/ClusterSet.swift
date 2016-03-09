@@ -49,7 +49,8 @@ class ClusterSet {
     
     func sumSquaredErrorWithBuckets(buckets: [[NumberInstance]]) -> Double {
         assert(buckets.count == _clusters.count)
-        return zip(_clusters, buckets).reduce(0.0, combine: { try! $0 + $1.0.sumSquaredDistanceForInstances($1.1) })
+        return zip(_clusters, buckets).map{ try! $0.0.sumSquaredDistanceForInstances($0.1) }.reduce(0, combine: +)
+        //return zip(_clusters, buckets).reduce(0.0, combine: { try! $0 + $1.0.sumSquaredDistanceForInstances($1.1) })
     }
     
     func accuracyOverData(data: [NumberInstance]) -> Double {
@@ -118,7 +119,7 @@ class ClusterSet {
         var dataString = ""
         for line in 0..<8 {
             let base = line * 8
-            let lineValues = row.map{ $0.center.attributeVector[base..<(base + 8)] }.flatten()
+            let lineValues = row.map{ Array($0.center.attributeVector[base..<(base + 8)]) }.flatten()
             let lineString = lineValues.map{ String(UInt8(($0 / 16) * 255)) }.joinWithSeparator(" ")
             dataString += lineString + "\n"
         }

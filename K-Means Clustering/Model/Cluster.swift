@@ -15,7 +15,7 @@ class Cluster {
     }
     
     init() {
-        _center = try! Point.RandomPoint(64)
+        _center = try! Point.RandomPoint(64, withLimit: 16)
     }
     
     init(fromPoint: Point) {
@@ -41,7 +41,7 @@ class Cluster {
     
     private func centroid(instances: [NumberInstance]) -> Point {
         if instances.count == 0 {
-            return try! Point.RandomPoint(64)
+            return try! Point.RandomPoint(64, withLimit: 16)
             //return center
         }
         
@@ -66,7 +66,8 @@ class Cluster {
     }
     
     func sumSquaredDistanceForInstances(instances: [NumberInstance]) throws -> Double {
-        return try instances.reduce(0.0, combine: { try $0 + center.squaredDistance($1.location) })
+        return try instances.map{ try center.squaredDistance($0.location) }.reduce(0, combine: +)
+        //return try instances.reduce(0.0, combine: { try $0 + center.squaredDistance($1.location) })
     }
     
     func visualized() -> NSData {

@@ -48,20 +48,22 @@ struct Point {
             throw PointErrors.MismatchedLengthError(expected: dimensions, found: p2.dimensions)
         }
         
-        return zip(attributeVector, p2.attributeVector).reduce(0.0, combine: { $0 + pow($1.1 - $1.0, 2) })
+        return zip(attributeVector, p2.attributeVector).map{ pow($0.1 - $0.0, 2) }.reduce(0, combine: +)
     }
     
-    static func RandomPoint(dimensions: Int) throws -> Point {
+    static func RandomPoint(dimensions: Int, withLimit: Double) throws -> Point {
         guard dimensions > 0 else {
             throw PointErrors.NegativeLengthException(length: dimensions)
         }
         
+        assert(withLimit > 0)
+        
         var attributes = [Double]()
         
         for _ in 0..<dimensions {
-            attributes.append(1.0 / Double(arc4random()))
+            attributes.append((Double(arc4random_uniform(100) + 1) / 100.0))
         }
         
-        return try Point(attributeVector: attributes)
+        return try Point(attributeVector: attributes.map{ $0 * withLimit })
     }
 }

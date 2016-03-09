@@ -25,7 +25,7 @@ class NumberInstance {
         let asArray = fromLine.componentsSeparatedByString(",")
         guard asArray.count == 65 else {
             knownValue = -1
-            location = try! Point.RandomPoint(64)
+            location = try! Point.RandomPoint(64, withLimit: 16)
             throw NumberInstanceError.InvalidStringInitializer(str: fromLine)
         }
         
