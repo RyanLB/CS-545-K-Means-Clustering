@@ -21,6 +21,13 @@ class ClusterSet {
         }
     }
     
+    init(k: Int, distributedThroughoutPoints: [Point]) {
+        _clusters = [Cluster()]
+        for _ in 1..<k {
+            _clusters.append(Cluster(fromPoint: mostRemoteOfPoints(distributedThroughoutPoints)))
+        }
+    }
+    
     func trainOnData(data: [NumberInstance], maxIterations: Int) throws {
         for _ in 0..<maxIterations {
             if !recenterClustersWithData(data) {
@@ -40,6 +47,16 @@ class ClusterSet {
         }
         
         return updated
+    }
+    
+    private func mostRemoteOfPoints(points: [Point]) -> Point {
+        let smallestDistances = points.map{ minDistanceToClusterCenterFromPoint($0) }
+        let windex = smallestDistances.randomWinnerIndex{ $0 == smallestDistances.maxElement() }
+        return points[windex]
+    }
+    
+    private func minDistanceToClusterCenterFromPoint(point: Point) -> Double {
+        return _clusters.map{ try! $0.center.squaredDistance(point) }.minElement()!
     }
     
     func sumSquaredErrorOverData(data: [NumberInstance]) -> Double {
@@ -75,7 +92,7 @@ class ClusterSet {
     class func bestOf(tries: Int, fromData: [NumberInstance], withCardinality: Int, andTrainingLimit: Int) throws -> ClusterSet {
         var sets = [ClusterSet]()
         for _ in 0..<tries {
-            let cs = ClusterSet(k: withCardinality)
+            let cs = ClusterSet(k: withCardinality, distributedThroughoutPoints: fromData.map{ $0.location })
             try cs.trainOnData(fromData, maxIterations: andTrainingLimit)
             sets.append(cs)
         }
